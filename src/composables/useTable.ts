@@ -17,7 +17,7 @@ export function useTable(apiFn: (params: any) => Promise<any>) {
       const res = await apiFn({
         pageNum: query.pageNum,
         pageSize: query.pageSize,
-        filters: query.filters
+        ...query.filters
       })
       list.value = res.list
       total.value = res.total

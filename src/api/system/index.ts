@@ -77,7 +77,35 @@ export function removeDictItem(id: string) {
   return del(`/system/v1/dict/item/${id}`)
 }
 
-// 流程定义列表（预留）
-export function getFlowList(params: any) {
-  return get<PageResult<any>>('/system/v1/flow/definition', params)
+// ============ 消息中心 ============
+export function getMessageTemplatePage(params: any) {
+  return get<PageResult<any>>('/system/v1/message/template/page', params)
+}
+export function createMessageTemplate(data: any) {
+  return post('/system/v1/message/template', data)
+}
+export function updateMessageTemplate(id: string, data: any) {
+  return put(`/system/v1/message/template/${id}`, data)
+}
+export function removeMessageTemplate(id: string) {
+  return del(`/system/v1/message/template/${id}`)
+}
+
+// ============ 流程引擎 ============
+export function getFlowPage(params: any) {
+  return get<PageResult<any>>('/system/v1/flow/definition/page', params)
+}
+export function createFlow(data: any) {
+  return post('/system/v1/flow/definition', data)
+}
+export function updateFlow(id: string, data: any) {
+  return put(`/system/v1/flow/definition/${id}`, data)
+}
+export function removeFlow(id: string) {
+  return del(`/system/v1/flow/definition/${id}`)
+}
+
+// ============ 操作日志 ============
+export function getOperLogPage(params: any) {
+  return get<PageResult<any>>('/system/v1/log/page', params)
 }

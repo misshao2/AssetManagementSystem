@@ -5,19 +5,19 @@ export function getScreenData() {
   return get('/report/v1/screen')
 }
 
-export function getAssetLedger(params: any) {
+export function getAssetLedger(params?: any) {
   return get<PageResult<any>>('/report/v1/asset-ledger', params)
 }
 
-export function getContractReport(params: any) {
+export function getContractReport(params?: any) {
   return get<PageResult<any>>('/report/v1/contract', params)
 }
 
-export function getCollectionReport(params: any) {
+export function getCollectionReport(params?: any) {
   return get('/report/v1/collection', params)
 }
 
-export function getStateOwnedReport(params: any) {
+export function getStateOwnedReport(params?: any) {
   return get('/report/v1/state-owned', params)
 }
 

@@ -28,11 +28,8 @@ const props = defineProps<{
 
 function resolvePath(path: string): string {
   if (/^https?:\/\//.test(path)) return path
-  // 已带前导斜杠：视为完整路径，直接返回（避免父级 base 重复拼接）
-  if (path.startsWith('/')) return path
-  const base = props.basePath.replace(/\/$/, '')
-  // 子菜单 path 已包含父级前缀（如 system/org）时，不再拼接 base
-  if (base && path.startsWith(base.replace(/^\//, '') + '/')) return `/${path}`
-  return base ? `${base}/${path}` : `/${path}`
+  // 菜单 path 在 mock 中已是完整路由路径（如 cert/archive），动态路由直接以其生成，
+  // 故此处统一按绝对路径处理，避免父级 path 重复拼接导致 404。
+  return path.startsWith('/') ? path : `/${path}`
 }
 </script>

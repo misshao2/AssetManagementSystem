@@ -22,6 +22,14 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // 使用现代 Sass API，消除 legacy JS API 弃用警告
+          api: 'modern'
+        }
+      }
+    },
     server: {
       port: 3000,
       open: false,
@@ -34,7 +42,17 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       target: 'es2018',
-      chunkSizeWarningLimit: 1500
+      chunkSizeWarningLimit: 1500,
+      rollupOptions: {
+        output: {
+          // 将大体积第三方依赖拆分独立 chunk，优化首屏加载与缓存
+          manualChunks: {
+            vue: ['vue', 'vue-router', 'pinia'],
+            elementPlus: ['element-plus', '@element-plus/icons-vue'],
+            echarts: ['echarts', 'vue-echarts']
+          }
+        }
+      }
     }
   }
 })
