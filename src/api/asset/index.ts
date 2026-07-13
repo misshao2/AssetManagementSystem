@@ -1,8 +1,11 @@
 import { get, post, put } from '@/utils/request'
-import type { PageResult, Asset } from '@/types'
+import type { PageResult, Asset, AssetLedgerStat } from '@/types'
 
 export function getAssetPage(params: any) {
   return get<PageResult<Asset>>('/asset/v1/asset/page', params)
+}
+export function getAssetLedgerStat() {
+  return get<AssetLedgerStat>('/asset/v1/asset/ledger-stat')
 }
 export function getAssetDashboard() {
   return get('/asset/v1/dashboard')

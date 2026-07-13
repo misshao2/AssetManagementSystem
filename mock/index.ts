@@ -97,11 +97,28 @@ function filterBy(list: any[], query: any) {
   return r
 }
 
+// 资产台账统计卡片计算
+function calcLedgerStat(list: any[]) {
+  const total = list.length
+  const totalValue = list.reduce((s, a) => s + (Number(a.assetValue) || 0), 0)
+  const inUse = list.filter((a) => a.useStatus === 'IN_USE').length
+  const arrearsRisk = list.filter((a) => (Number(a.arrears) || 0) > 0).length
+  const inUseRate = total ? ((inUse / total) * 100).toFixed(1) + '%' : '0%'
+  return { total, totalValue, inUse, inUseRate, arrearsRisk }
+}
+
 // ============ 业务样例数据 ============
+// 资产台账列表（对齐 Figma「资产管理-资产台账」设计稿）
 const assetList = [
-  { assetId: 'A1001', assetCode: 'ZC-2026-0001', assetName: '滨江国际写字楼 A 座', assetType: 'OFFICE', orgId: 'ORG_BJ', orgName: '滨江国际项目', building: 'A 座', area: 32000, status: 'LEASED', manager: '李资产', originalValue: 480000000, netValue: 410000000 },
-  { assetId: 'A1002', assetCode: 'ZC-2026-0002', assetName: '阳光商业广场', assetType: 'COMMERCIAL', orgId: 'ORG_YG', orgName: '阳光商业项目', building: '主楼', area: 56000, status: 'VACANT', manager: '王招商', originalValue: 620000000, netValue: 590000000 },
-  { assetId: 'A1003', assetCode: 'ZC-2026-0003', assetName: '智造产业园 3 号厂房', assetType: 'PARK', orgId: 'ORG_ZZ', orgName: '智造产业园', building: '3 号', area: 18000, status: 'IN_USE', manager: '赵运营', originalValue: 120000000, netValue: 105000000 }
+  { assetId: 'A1001', assetCode: 'ZC-2026-0001', assetName: '总部办公大楼A座', status: 'IN_USE', buildingName: '总部办公大楼A座', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证第2020001号', address: '上海市黄浦区中山东一路88号', useTerm: '2020-01-01 ~ 2050-12-31', buildingArea: 24000, landNature: '出让/商业办公用地', structureType: '钢筋混凝土框架结构', source: '收购', assetValue: 85000000, assetCondition: '完好', useStatus: 'IN_USE', lessee: '', leaseArea: null, leaseTerm: '', payMethod: '', deposit: null, arrears: null, remark: '集团总部所在地，6层综合办公空间' },
+  { assetId: 'A1002', assetCode: 'ZC-2026-0002', assetName: '滨江商业中心B栋', status: 'IN_USE', buildingName: '滨江商业中心B栋', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证浦字第2021007号', address: '上海市浦东新区陆家嘴环路118号', useTerm: '2021-03-01 ~ 2041-02-28', buildingArea: 18500, landNature: '出让/商业综合体用地', structureType: '钢筋混凝土核心筒结构', source: '划转', assetValue: 62000000, assetCondition: '完好', useStatus: 'IN_USE', lessee: '星耀餐饮管理有限公司', leaseArea: 3200, leaseTerm: '2023-01-01 ~ 2027-12-31', payMethod: '季度缴纳，每季度末15日前', deposit: 960000, arrears: null, remark: '3-5层出租为商业餐饮，1-2层自用' },
+  { assetId: 'A1003', assetCode: 'ZC-2026-0003', assetName: '科技产业园C区厂房', status: 'IN_USE', buildingName: '科技产业园C区厂房', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证闵字第2019021号', address: '上海市闵行区莘庄工业区88号', useTerm: '2019-06-01 ~ 2039-05-31', buildingArea: 12000, landNature: '出让/工业用地', structureType: '钢结构厂房', source: '划拨', assetValue: 28000000, assetCondition: '完好', useStatus: 'IN_USE', lessee: '芯锐半导体科技股份有限公司', leaseArea: 12000, leaseTerm: '2022-01-01 ~ 2026-12-31', payMethod: '月缴，每月5日前', deposit: 200000, arrears: 600000, remark: '整体出租，租户2024年起存在逾期' },
+  { assetId: 'A1004', assetCode: 'ZC-2026-0004', assetName: '老城区仓储基地D栋', status: 'VACANT', buildingName: '老城区仓储基地D栋', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证静字第2015035号', address: '上海市静安区长安路325号', useTerm: '2015-03-01 ~ 2035-02-28', buildingArea: 5000, landNature: '划拨/仓储物流用地', structureType: '钢结构', source: '划转', assetValue: 15000000, assetCondition: '需修缮', useStatus: 'VACANT', lessee: '', leaseArea: null, leaseTerm: '', payMethod: '', deposit: null, arrears: null, remark: '已闲置180天，屋顶部分区域需修缮' },
+  { assetId: 'A1005', assetCode: 'ZC-2026-0005', assetName: '南郊综合服务楼E座', status: 'IN_USE', buildingName: '南郊综合服务楼E座', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证徐字第2022018号', address: '上海市徐汇区龙吴路577号', useTerm: '2022-01-01 ~ 2042-12-31', buildingArea: 8200, landNature: '出让/综合服务用地', structureType: '钢筋混凝土框架结构', source: '收购', assetValue: 35000000, assetCondition: '完好', useStatus: 'IN_USE', lessee: '优享健身服务有限公司', leaseArea: 2500, leaseTerm: '2023-06-01 ~ 2028-05-31', payMethod: '月缴，每月10日前', deposit: 150000, arrears: null, remark: '1层出租为健身中心，2-4层办公' },
+  { assetId: 'A1006', assetCode: 'ZC-2026-0006', assetName: '东郊培训中心F楼', status: 'IN_USE', buildingName: '东郊培训中心F楼', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证崇字第2023026号', address: '上海市崇明区安亭镇翠竹路9号', useTerm: '2023-04-01 ~ 2043-03-31', buildingArea: 4500, landNature: '出让/教育培训用地', structureType: '钢筋混凝土框架结构', source: '划拨', assetValue: 18000000, assetCondition: '完好', useStatus: 'IN_USE', lessee: '', leaseArea: null, leaseTerm: '', payMethod: '', deposit: null, arrears: null, remark: '集团培训中心专用，不对外出租' },
+  { assetId: 'A1007', assetCode: 'ZC-2026-0007', assetName: '旧员工宿舍G栋', status: 'VACANT', buildingName: '旧员工宿舍G栋', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证杨字第2010020号', address: '上海市杨浦区控江路156号', useTerm: '2010-01-01 ~ 2030-12-31', buildingArea: 3800, landNature: '划拨/住宅用地', structureType: '砖混结构', source: '划拨', assetValue: 5000000, assetCondition: '老化', useStatus: 'VACANT', lessee: '', leaseArea: null, leaseTerm: '', payMethod: '', deposit: null, arrears: null, remark: '砖混结构老化严重，已闭楼待改造' },
+  { assetId: 'A1008', assetCode: 'ZC-2026-0008', assetName: '北郊数据中心机房H座', status: 'IN_USE', buildingName: '北郊数据中心机房H座', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证宝字第2024009号', address: '上海市宝山区罗泾镇川纪路100号', useTerm: '2024-01-01 ~ 2054-12-31', buildingArea: 6000, landNature: '出让/工业用地（数据中心）', structureType: '钢筋混凝土结构', source: '收购', assetValue: 42000000, assetCondition: '完好', useStatus: 'IN_USE', lessee: '云信科技有限公司', leaseArea: 2000, leaseTerm: '2024-06-01 ~ 2029-05-31', payMethod: '月缴，每月1日前', deposit: 300000, arrears: null, remark: '2层出租为IDC机房托管区域' },
+  { assetId: 'A1009', assetCode: 'ZC-2026-0009', assetName: '西郊物流仓库I栋', status: 'FROZEN', buildingName: '西郊物流仓库I栋', ownerUnit: '中国国有资产运营集团有限公司', certNo: '沪房权证松字第2018010号', address: '上海市松江区九亭镇漕亭路66号', useTerm: '2018-08-01 ~ 2038-07-31', buildingArea: 9500, landNature: '出让/仓储物流用地', structureType: '钢结构', source: '划转', assetValue: 22000000, assetCondition: '需修缮', useStatus: 'FROZEN', lessee: '迅捷物流股份有限公司', leaseArea: 9500, leaseTerm: '2020-03-01 ~ 2025-02-28', payMethod: '季度缴纳，每季度首月10日前', deposit: 500000, arrears: 1200000, remark: '因产权纠纷被法院查封，暂停处置' }
 ]
 
 const certArchive = [
@@ -420,12 +437,23 @@ export default [
 
   // ============ 资产全生命周期 ============
   {
+    url: '/api/asset/v1/asset/ledger-stat', method: 'get',
+    response: () => ok(calcLedgerStat(assetList), 'a0')
+  },
+  {
     url: '/api/asset/v1/asset/page', method: 'get',
     response: ({ query }: any) => {
       const kw = (query.keyword || '').trim()
       let f = assetList
-      if (kw) f = f.filter((a) => a.assetName.includes(kw) || a.assetCode.includes(kw))
-      return ok({ list: f, total: f.length, pageNum: Number(query.pageNum), pageSize: Number(query.pageSize) }, 'a1')
+      if (kw) f = f.filter((a) => [a.buildingName, a.ownerUnit, a.certNo, a.address, a.assetName].some((v) => (v || '').includes(kw)))
+      if (query.buildingName) f = f.filter((a) => (a.buildingName || '').includes(query.buildingName))
+      if (query.ownerUnit) f = f.filter((a) => (a.ownerUnit || '') === query.ownerUnit)
+      if (query.source) f = f.filter((a) => a.source === query.source)
+      if (query.useStatus) f = f.filter((a) => a.useStatus === query.useStatus)
+      if (query.status) f = f.filter((a) => a.status === query.status)
+      if (query.assetType) f = f.filter((a) => a.assetType === query.assetType)
+      if (query.orgId) f = f.filter((a) => a.orgId === query.orgId)
+      return ok(toPage(f, Number(query.pageNum), Number(query.pageSize)), 'a1')
     }
   },
   { url: '/api/asset/v1/dashboard', method: 'get', response: () => ok({ total: 1286, totalArea: 356.8, leaseRate: 82.4, vacantArea: 62.4, monthAdd: 8, toDispose: 37, warning: 5 }, 'a2') },
