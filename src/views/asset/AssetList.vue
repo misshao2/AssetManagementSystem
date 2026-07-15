@@ -78,34 +78,34 @@
       </div>
 
       <el-table v-loading="loading" :data="list" border stripe style="width: 100%">
-        <el-table-column type="index" label="序号" width="56" />
-        <el-table-column prop="buildingName" label="建筑物名称" width="160" />
+        <el-table-column type="index" label="序号" width="56" align="center" />
+        <el-table-column prop="buildingName" label="建筑物名称" width="160" fixed="left" show-overflow-tooltip />
         <el-table-column prop="ownerUnit" label="产权单位" width="180" show-overflow-tooltip />
         <el-table-column prop="certNo" label="产权证号" width="160" show-overflow-tooltip />
         <el-table-column prop="address" label="建筑地址" width="220" show-overflow-tooltip />
-        <el-table-column prop="useTerm" label="使用期限" width="150" />
+        <el-table-column prop="useTerm" label="使用期限" width="108" show-overflow-tooltip />
         <el-table-column prop="buildingArea" label="建筑面积(㎡)" width="118" align="right" :formatter="fmtArea" />
-        <el-table-column prop="landNature" label="土地性质" width="150" show-overflow-tooltip />
-        <el-table-column prop="structureType" label="结构类型" width="150" show-overflow-tooltip />
+        <el-table-column prop="landNature" label="土地性质" width="120" show-overflow-tooltip />
+        <el-table-column prop="structureType" label="结构类型" width="120" show-overflow-tooltip />
         <el-table-column prop="source" label="来源" width="130" align="right" />
         <el-table-column prop="assetValue" label="资产价值(元)" width="148" align="right" :formatter="fmtMoney" />
-        <el-table-column prop="assetCondition" label="资产状况" width="90" />
-        <el-table-column label="使用状态" width="120">
+        <el-table-column prop="assetCondition" label="资产状况" width="90" align="center" />
+        <el-table-column label="使用状态" width="120" align="center">
           <template #default="{ row }">
             <span class="status-badge" :class="statusClass(row.useStatus)">{{ useStatusLabel(row.useStatus) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="lessee" label="承租人" width="130" show-overflow-tooltip>
+        <el-table-column prop="lessee" label="承租人" width="110" show-overflow-tooltip>
           <template #default="{ row }">{{ row.lessee || '--' }}</template>
         </el-table-column>
         <el-table-column prop="leaseArea" label="出租面积(㎡)" width="120" align="right" :formatter="fmtArea" />
-        <el-table-column prop="leaseTerm" label="租赁期限" width="150" />
-        <el-table-column prop="payMethod" label="支付方式" width="170" show-overflow-tooltip>
+        <el-table-column prop="leaseTerm" label="租赁期限" width="128" show-overflow-tooltip />
+        <el-table-column prop="payMethod" label="支付方式" width="128" show-overflow-tooltip>
           <template #default="{ row }">{{ row.payMethod || '--' }}</template>
         </el-table-column>
-        <el-table-column prop="deposit" label="押金(元)" width="120" align="right" :formatter="fmtMoney" />
-        <el-table-column prop="arrears" label="欠款(元)" width="120" align="right" :formatter="fmtMoney" />
-        <el-table-column prop="remark" label="备注" width="200" show-overflow-tooltip />
+        <el-table-column prop="deposit" label="押金(元)" width="220" align="right" :formatter="fmtMoney" />
+        <el-table-column prop="arrears" label="欠款(元)" width="108" align="right" :formatter="fmtMoney" />
+        <el-table-column prop="remark" label="备注" width="140" show-overflow-tooltip />
         <el-table-column label="操作一览" width="130" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="goDetail(row)">详情</el-button>
