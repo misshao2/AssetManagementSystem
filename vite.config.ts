@@ -14,7 +14,10 @@ export default defineConfig(({ mode }) => {
       viteMockServe({
         mockPath: 'mock',
         enable: useMock,
-        logger: true
+        logger: true,
+        // 排除 vite-plugin-mock 生成的 .mjs 缓存文件，
+        // 否则旧缓存中已注释的端点仍会被加载
+        ignore: /_.*\.bundled_/
       })
     ],
     resolve: {
@@ -35,7 +38,7 @@ export default defineConfig(({ mode }) => {
       open: false,
       proxy: {
         '/api': {
-          target: env.VITE_API_BASE_URL || 'http://localhost:8080',
+          target: env.VITE_API_PROXY_TARGET || 'http://localhost:8081',
           changeOrigin: true
         }
       }

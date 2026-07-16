@@ -43,19 +43,13 @@
       </div>
       <div class="filter-item">
         <span class="filter-label">使用状态</span>
-        <el-select v-model="query.filters.useStatus" placeholder="全部" clearable style="width: 140px">
-          <el-option v-for="s in useStatusOptions" :key="s.value" :label="s.label" :value="s.value" />
+        <el-select v-model="query.filters.status" placeholder="全部" clearable style="width: 140px">
+          <el-option v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value" />
         </el-select>
       </div>
       <div class="filter-item">
         <span class="filter-label">建筑物名称</span>
         <el-input v-model="query.filters.buildingName" placeholder="请输入名称" clearable style="width: 170px" />
-      </div>
-      <div class="filter-item">
-        <span class="filter-label">产权单位</span>
-        <el-select v-model="query.filters.ownerUnit" placeholder="全部" clearable filterable style="width: 220px">
-          <el-option v-for="o in ownerUnitOptions" :key="o" :label="o" :value="o" />
-        </el-select>
       </div>
       <div class="filter-actions">
         <el-button type="primary" :icon="Search" @click="search()">查询</el-button>
@@ -73,7 +67,6 @@
         </div>
         <div class="table-tools">
           <el-button type="primary" :icon="Plus" @click="handleCreate">新增资产</el-button>
-          <el-button :icon="Download" @click="handleExport">导出</el-button>
         </div>
       </div>
 
@@ -81,36 +74,23 @@
         <el-table-column type="index" label="序号" width="56" align="center" />
         <el-table-column prop="buildingName" label="建筑物名称" width="160" fixed="left" show-overflow-tooltip />
         <el-table-column prop="ownerUnit" label="产权单位" width="180" show-overflow-tooltip />
-        <el-table-column prop="certNo" label="产权证号" width="160" show-overflow-tooltip />
+        <el-table-column prop="propertyNo" label="产权证号" width="160" show-overflow-tooltip />
         <el-table-column prop="address" label="建筑地址" width="220" show-overflow-tooltip />
-        <el-table-column prop="useTerm" label="使用期限" width="108" show-overflow-tooltip />
+        <el-table-column prop="usageTerm" label="使用期限" width="108" show-overflow-tooltip />
         <el-table-column prop="buildingArea" label="建筑面积(㎡)" width="118" align="right" :formatter="fmtArea" />
         <el-table-column prop="landNature" label="土地性质" width="120" show-overflow-tooltip />
         <el-table-column prop="structureType" label="结构类型" width="120" show-overflow-tooltip />
         <el-table-column prop="source" label="来源" width="130" align="right" />
         <el-table-column prop="assetValue" label="资产价值(元)" width="148" align="right" :formatter="fmtMoney" />
-        <el-table-column prop="assetCondition" label="资产状况" width="90" align="center" />
         <el-table-column label="使用状态" width="120" align="center">
           <template #default="{ row }">
-            <span class="status-badge" :class="statusClass(row.useStatus)">{{ useStatusLabel(row.useStatus) }}</span>
+            <span class="status-badge" :class="statusClass(row.statusName)">{{ row.statusName || '--' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="lessee" label="承租人" width="110" show-overflow-tooltip>
-          <template #default="{ row }">{{ row.lessee || '--' }}</template>
-        </el-table-column>
-        <el-table-column prop="leaseArea" label="出租面积(㎡)" width="120" align="right" :formatter="fmtArea" />
-        <el-table-column prop="leaseTerm" label="租赁期限" width="128" show-overflow-tooltip />
-        <el-table-column prop="payMethod" label="支付方式" width="128" show-overflow-tooltip>
-          <template #default="{ row }">{{ row.payMethod || '--' }}</template>
-        </el-table-column>
-        <el-table-column prop="deposit" label="押金(元)" width="220" align="right" :formatter="fmtMoney" />
-        <el-table-column prop="arrears" label="欠款(元)" width="108" align="right" :formatter="fmtMoney" />
-        <el-table-column prop="remark" label="备注" width="140" show-overflow-tooltip />
-        <el-table-column label="操作一览" width="130" fixed="right">
+        <el-table-column label="操作" width="120" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="goDetail(row)">详情</el-button>
             <el-button type="primary" link @click="goEdit(row)">编辑</el-button>
-            <el-button type="primary" link :icon="MoreFilled" title="状态变更" @click="openStatus(row)" />
           </template>
         </el-table-column>
       </el-table>
@@ -130,52 +110,27 @@
         />
       </div>
     </div>
-
-    <!-- 状态变更 -->
-    <el-dialog v-model="statusDialog" title="资产状态变更" width="460px">
-      <el-form label-width="90px">
-        <el-form-item label="资产">
-          <span>{{ statusRow?.buildingName || statusRow?.assetName }}</span>
-        </el-form-item>
-        <el-form-item label="当前状态">
-          <span class="status-badge" :class="statusClass(statusRow?.useStatus)">{{ useStatusLabel(statusRow?.useStatus) }}</span>
-        </el-form-item>
-        <el-form-item label="目标状态" required>
-          <el-select v-model="statusForm.status" style="width: 100%">
-            <el-option v-for="s in useStatusOptions" :key="s.value" :label="s.label" :value="s.value" :disabled="s.value === statusRow?.useStatus" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="变更原因">
-          <el-input v-model="statusForm.reason" type="textarea" :rows="3" placeholder="请填写状态变更原因" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="statusDialog = false">取消</el-button>
-        <el-button type="primary" :loading="statusSubmitting" @click="submitStatus">确定</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, onMounted } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { Search, Refresh, Plus, Download, MoreFilled } from '@element-plus/icons-vue'
+import { Search, Refresh, Plus } from '@element-plus/icons-vue'
 import { useTable } from '@/composables/useTable'
-import { getAssetPage, getAssetLedgerStat, updateAssetStatus, exportAsset } from '@/api/asset'
+import { getAssetPage, getAssetLedgerStat } from '@/api/asset'
 import type { AssetLedgerStat } from '@/types'
 
 const router = useRouter()
 const { loading, list, total, query, getList, search, reset, handleSizeChange, handleCurrentChange } = useTable(getAssetPage)
 
 const sourceOptions = ['收购', '划转', '划拨']
-const useStatusOptions = [
-  { label: '在用', value: 'IN_USE' },
-  { label: '闲置', value: 'VACANT' },
-  { label: '冻结', value: 'FROZEN' }
+// 接口文档：status 0-闲置 1-在用 2-欠费风险
+const statusOptions = [
+  { label: '闲置', value: 0 },
+  { label: '在用', value: 1 },
+  { label: '欠费风险', value: 2 }
 ]
-const ownerUnitOptions = computed(() => [...new Set(list.value.map((a: any) => a.ownerUnit).filter(Boolean))])
 
 const stats = reactive<AssetLedgerStat>({ total: 0, totalValue: 0, inUse: 0, inUseRate: '0%', arrearsRisk: 0 })
 async function fetchStats() {
@@ -199,59 +154,27 @@ function fmtArea(_row: any, _col: any, val: any) {
   if (val === null || val === undefined || val === '') return '--'
   return Number(val).toLocaleString('zh-CN')
 }
-function useStatusLabel(v: string) {
-  return useStatusOptions.find((o) => o.value === v)?.label || v || '--'
-}
-function statusClass(v: string) {
-  return { IN_USE: 'st-in-use', VACANT: 'st-vacant', FROZEN: 'st-frozen' }[v] || 'st-default'
+// 根据状态名称返回样式类
+function statusClass(statusName?: string) {
+  if (!statusName) return 'st-default'
+  if (statusName.includes('在用')) return 'st-in-use'
+  if (statusName.includes('闲置')) return 'st-vacant'
+  if (statusName.includes('欠费')) return 'st-frozen'
+  return 'st-default'
 }
 
 function goDetail(row: any) {
-  router.push(`/asset/detail/${row.assetId}`)
+  router.push(`/asset/detail/${row.id}`)
 }
 function goEdit(row: any) {
-  router.push(`/asset/detail/${row.assetId}`)
+  router.push(`/asset/detail/${row.id}`)
 }
 function handleCreate() {
   router.push('/asset/create')
 }
-function handleExport() {
-  exportAsset()
-    .then(() => ElMessage.success('资产台账已导出'))
-    .catch(() => ElMessage.success('资产台账已导出'))
-}
 function handleRefresh() {
   fetchStats()
   getList()
-}
-
-// —— 状态变更 ——
-const statusDialog = ref(false)
-const statusSubmitting = ref(false)
-const statusRow = ref<any>(null)
-const statusForm = reactive({ status: '', reason: '' })
-function openStatus(row: any) {
-  statusRow.value = row
-  statusForm.status = ''
-  statusForm.reason = ''
-  statusDialog.value = true
-}
-async function submitStatus() {
-  if (!statusRow.value) return
-  if (!statusForm.status) {
-    ElMessage.warning('请选择目标状态')
-    return
-  }
-  statusSubmitting.value = true
-  try {
-    await updateAssetStatus(statusRow.value.assetId, statusForm.status, statusForm.reason)
-    ElMessage.success('状态已变更')
-    statusDialog.value = false
-    fetchStats()
-    getList()
-  } finally {
-    statusSubmitting.value = false
-  }
 }
 
 onMounted(() => {

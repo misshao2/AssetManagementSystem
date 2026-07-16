@@ -5,7 +5,7 @@
       <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" style="max-width: 720px">
         <el-form-item label="目标资产" prop="assetId">
           <el-select v-model="form.assetId" filterable placeholder="选择资产" style="width: 100%">
-            <el-option v-for="a in assetList" :key="a.assetId" :label="`${a.assetName}（${a.assetCode}）`" :value="a.assetId" />
+            <el-option v-for="a in assetList" :key="a.id" :label="a.buildingName" :value="a.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="操作类型" prop="type">
