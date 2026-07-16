@@ -4,7 +4,7 @@ export interface ApiResult<T = any> {
   code: number
   message: string
   data: T
-  requestId: string
+  requestId?: string
 }
 
 export interface PageResult<T> {
@@ -82,4 +82,52 @@ export interface AssetLedgerStat {
   inUse: number
   inUseRate: string
   arrearsRisk: number
+}
+
+// ===== 接口文档 /api/v1/assets 类型 =====
+
+// 资产详情视图对象（接口文档 AssetVO）
+export interface AssetVO {
+  id: number
+  buildingName?: string
+  ownerUnit?: string
+  propertyNo?: string // 产权证号
+  address?: string
+  usageTerm?: string // 使用期限
+  buildingArea?: number
+  landNature?: string
+  structureType?: string
+  source?: string
+  assetValue?: number
+  statusName?: string // 使用状态（在用/闲置/欠费风险）
+  [key: string]: any
+}
+
+// 资产统计视图对象（接口文档 AssetStatisticsVO）
+export interface AssetStatisticsVO {
+  totalCount: number
+  totalValue: number
+  inUseCount: number
+  overdueRiskCount: number
+}
+
+// 资产查询参数（接口文档 AssetQueryParam）
+export interface AssetQueryParam {
+  page?: number
+  pageSize?: number
+  buildingName?: string
+  status?: number // 0-闲置 1-在用 2-欠费风险
+  source?: string
+}
+
+// 接口文档分页结构
+export interface ApiPagination {
+  page: number
+  total: number
+  pageSize: number
+}
+
+export interface ApiPageResult<T> {
+  list: T[]
+  pagination: ApiPagination
 }
